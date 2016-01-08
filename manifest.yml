@@ -1,0 +1,7 @@
+applications:
+- name: pzsvc-lasinfo
+  host: pzsvc-lasinfo
+  path: pzsvc-lasinfo
+  memory: 512M
+  instances: 1
+  timeout: 80
