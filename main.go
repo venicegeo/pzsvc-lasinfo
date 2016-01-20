@@ -121,6 +121,10 @@ func ReadLas(fname string) (h LasHeader, p []Format1) {
 func main() {
 	router := httprouter.New()
 
+	router.GET("/", func(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+		fmt.Fprintf(w, "Hi!")
+	})
+
 	router.GET("/info", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		var inputName string
 		var fileIn *os.File
