@@ -149,8 +149,13 @@ func main() {
 		}
 	})
 
-	log.Println("Starting on 8080")
-	if err := http.ListenAndServe(":8080", router); err != nil {
+	var defaultPort = os.Getenv("PORT")
+	if defaultPort == "" {
+		defaultPort = "8080"
+	}
+
+	log.Println("Starting on ", defaultPort)
+	if err := http.ListenAndServe(":"+defaultPort, router); err != nil {
 		log.Fatal(err)
 	}
 }
