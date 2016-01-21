@@ -148,13 +148,12 @@ func main() {
 		// if err != nil {
 		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
 		// }
-		//
-		// w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		// w.WriteHeader(http.StatusOK)
+
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
 		// if err := json.NewEncoder(w).Encode(h); err != nil {
 		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
 		// }
-		fmt.Fprintf(w, "info please")
 	})
 
 	var defaultPort = os.Getenv("PORT")
