@@ -18,6 +18,7 @@ package main
 
 import (
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -136,6 +137,7 @@ func main() {
 		fileIn, err := os.Create(inputName)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 		defer fileIn.Close()
 
@@ -143,18 +145,19 @@ func main() {
 		err = s3.Download(fileIn, "venicegeo-sample-data", "pointcloud/samp11-utm.las")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
-		// h, _, err := ReadLas(inputName)
-		// if err != nil {
-		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-		// }
+		h, _, err := ReadLas(inputName)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
-		// if err := json.NewEncoder(w).Encode(h); err != nil {
-		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-		// }
+		if err := json.NewEncoder(w).Encode(h); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	})
 
 	var defaultPort = os.Getenv("PORT")
