@@ -139,12 +139,12 @@ func main() {
 		}
 		defer fileIn.Close()
 
-		// // Download the source data from S3, throwing 500 on error.
-		// err = s3.Download(fileIn, "venicegeo-sample-data", "pointcloud/samp11-utm.las")
-		// if err != nil {
-		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-		// }
-		//
+		// Download the source data from S3, throwing 500 on error.
+		err = s3.Download(fileIn, "venicegeo-sample-data", "pointcloud/samp11-utm.las")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
 		// h, _, err := ReadLas(inputName)
 		// if err != nil {
 		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
