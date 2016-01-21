@@ -87,9 +87,11 @@ type Format3 struct {
 }
 
 // ReadLas reads an LAS file.
-func ReadLas(fname string) (h LasHeader, p []Format1) {
+func ReadLas(fname string) (h LasHeader, p []Format1, err error) {
 	f, err := os.Open(fname)
-	check(err)
+	if err != nil {
+		return h, p, err
+	}
 	defer f.Close()
 
 	binary.Read(f, binary.LittleEndian, &h)
@@ -115,7 +117,7 @@ func ReadLas(fname string) (h LasHeader, p []Format1) {
 		fmt.Printf("%+v\n", points[:5])
 		fmt.Printf("%+v\n", points[len(points)-5:])
 	}
-	return
+	return h, p, nil
 }
 
 func main() {
@@ -144,12 +146,15 @@ func main() {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
-		h, _ := ReadLas(inputName)
+		h, _, err := ReadLas(inputName)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 		if err := json.NewEncoder(w).Encode(h); err != nil {
-			log.Fatal(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	})
 
