@@ -133,12 +133,16 @@ func main() {
 		// input filename. Create the input file, throwing 500 on error.
 		inputName = s3.ParseFilenameFromKey("pointcloud/samp11-utm.las")
 		fileIn, err := os.Create(inputName)
-		check(err)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		defer fileIn.Close()
 
 		// Download the source data from S3, throwing 500 on error.
 		err = s3.Download(fileIn, "venicegeo-sample-data", "pointcloud/samp11-utm.las")
-		check(err)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 
 		h, _ := ReadLas(inputName)
 
