@@ -24,6 +24,7 @@ import (
 	"os"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/venicegeo/pzsvc-sdk-go/s3"
 )
 
 func check(e error) {
@@ -126,18 +127,18 @@ func main() {
 	})
 
 	router.GET("/info", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-		// var inputName string
-		// var fileIn *os.File
-		//
-		// // Split the source S3 key string, interpreting the last element as the
-		// // input filename. Create the input file, throwing 500 on error.
-		// inputName = s3.ParseFilenameFromKey("pointcloud/samp11-utm.las")
-		// fileIn, err := os.Create(inputName)
-		// if err != nil {
-		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-		// }
-		// defer fileIn.Close()
-		//
+		var inputName string
+		var fileIn *os.File
+
+		// Split the source S3 key string, interpreting the last element as the
+		// input filename. Create the input file, throwing 500 on error.
+		inputName = s3.ParseFilenameFromKey("pointcloud/samp11-utm.las")
+		fileIn, err := os.Create(inputName)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		defer fileIn.Close()
+
 		// // Download the source data from S3, throwing 500 on error.
 		// err = s3.Download(fileIn, "venicegeo-sample-data", "pointcloud/samp11-utm.las")
 		// if err != nil {
