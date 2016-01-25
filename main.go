@@ -20,12 +20,14 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
+	"strings"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/venicegeo/pzsvc-sdk-go/s3"
 )
 
 func check(e error) {
@@ -120,6 +122,10 @@ func ReadLas(fname string) (h LasHeader, p []Format1, err error) {
 	return h, p, nil
 }
 
+// func Download(file *os.File, url string) error {
+//
+// }
+
 func main() {
 	router := httprouter.New()
 
@@ -128,12 +134,24 @@ func main() {
 	})
 
 	router.GET("/info", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-		var inputName string
-		var fileIn *os.File
+		// var inputName string
+		// var fileIn *os.File
 
 		// Split the source S3 key string, interpreting the last element as the
 		// input filename. Create the input file, throwing 500 on error.
-		inputName = s3.ParseFilenameFromKey("pointcloud/samp11-utm.las")
+		// inputName = s3.ParseFilenameFromKey("pointcloud/samp11-utm.las")
+		// fileIn, err := os.Create(inputName)
+		// if err != nil {
+		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+		// 	return
+		// }
+		// defer fileIn.Close()
+
+		rawURL := "https://s3.amazonaws.com/venicegeo-sample-data/pointcloud/samp11-utm.las"
+		fileURL, err := url.Parse(rawURL)
+		path := fileURL.Path
+		segments := strings.Split(path, "/")
+		inputName := segments[len(segments)-1]
 		fileIn, err := os.Create(inputName)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -142,7 +160,16 @@ func main() {
 		defer fileIn.Close()
 
 		// Download the source data from S3, throwing 500 on error.
-		err = s3.Download(fileIn, "venicegeo-sample-data", "pointcloud/samp11-utm.las")
+		// err = s3.Download(fileIn, "venicegeo-sample-data", "pointcloud/samp11-utm.las")
+		check := http.Client{
+			CheckRedirect: func(r *http.Request, via []*http.Request) error {
+				r.URL.Opaque = r.URL.Path
+				return nil
+			},
+		}
+		resp, err := check.Get(rawURL)
+		defer resp.Body.Close()
+		_, err = io.Copy(fileIn, resp.Body)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
