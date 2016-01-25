@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -122,10 +123,6 @@ func ReadLas(fname string) (h LasHeader, p []Format1, err error) {
 	return h, p, nil
 }
 
-// func Download(file *os.File, url string) error {
-//
-// }
-
 func main() {
 	router := httprouter.New()
 
@@ -133,7 +130,7 @@ func main() {
 		fmt.Fprintf(w, "Hi!")
 	})
 
-	router.GET("/info", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	router.POST("/info", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		// var inputName string
 		// var fileIn *os.File
 
@@ -147,8 +144,26 @@ func main() {
 		// }
 		// defer fileIn.Close()
 
-		rawURL := "https://s3.amazonaws.com/venicegeo-sample-data/pointcloud/samp11-utm.las"
-		fileURL, err := url.Parse(rawURL)
+		type infoOptions struct {
+			URL string `json:"url"`
+		}
+
+		var opts infoOptions
+		if r.Body == nil {
+			// bad request
+		}
+
+		b, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			// internal error
+		}
+
+		if err := json.Unmarshal(b, &opts); err != nil {
+			// bad request
+		}
+
+		// rawURL := "https://s3.amazonaws.com/venicegeo-sample-data/pointcloud/samp11-utm.las"
+		fileURL, err := url.Parse(opts.URL)
 		path := fileURL.Path
 		segments := strings.Split(path, "/")
 		inputName := segments[len(segments)-1]
@@ -167,7 +182,7 @@ func main() {
 				return nil
 			},
 		}
-		resp, err := check.Get(rawURL)
+		resp, err := check.Get(opts.URL)
 		defer resp.Body.Close()
 		_, err = io.Copy(fileIn, resp.Body)
 		if err != nil {
