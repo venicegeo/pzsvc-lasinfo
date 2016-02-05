@@ -131,38 +131,27 @@ func main() {
 	})
 
 	router.POST("/info", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-		// var inputName string
-		// var fileIn *os.File
-
-		// Split the source S3 key string, interpreting the last element as the
-		// input filename. Create the input file, throwing 500 on error.
-		// inputName = s3.ParseFilenameFromKey("pointcloud/samp11-utm.las")
-		// fileIn, err := os.Create(inputName)
-		// if err != nil {
-		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-		// 	return
-		// }
-		// defer fileIn.Close()
-
 		type infoOptions struct {
 			URL string `json:"url"`
 		}
 
 		var opts infoOptions
 		if r.Body == nil {
-			// bad request
+			http.Error(w, "No body", http.StatusBadRequest)
+			return
 		}
 
 		b, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			// internal error
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		if err := json.Unmarshal(b, &opts); err != nil {
-			// bad request
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 
-		// rawURL := "https://s3.amazonaws.com/venicegeo-sample-data/pointcloud/samp11-utm.las"
 		fileURL, err := url.Parse(opts.URL)
 		path := fileURL.Path
 		segments := strings.Split(path, "/")
@@ -174,8 +163,7 @@ func main() {
 		}
 		defer fileIn.Close()
 
-		// Download the source data from S3, throwing 500 on error.
-		// err = s3.Download(fileIn, "venicegeo-sample-data", "pointcloud/samp11-utm.las")
+		// Download the source data, throwing 500 on error.
 		check := http.Client{
 			CheckRedirect: func(r *http.Request, via []*http.Request) error {
 				r.URL.Opaque = r.URL.Path
@@ -193,12 +181,14 @@ func main() {
 		h, _, err := ReadLas(inputName)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 		if err := json.NewEncoder(w).Encode(h); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 	})
 
