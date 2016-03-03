@@ -29,6 +29,7 @@ import (
 	"strings"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/venicegeo/pzsvc-sdk-go/gateway"
 )
 
 func check(e error) {
@@ -124,6 +125,18 @@ func ReadLas(fname string) (h LasHeader, p []Format1, err error) {
 }
 
 func main() {
+	m := gateway.ResourceMetadata{
+		Name:             "pzsvc-lasinfo",
+		URL:              "http://pzsvc-lasinfo.cf.piazzageo.io/info",
+		Description:      "Dump LAS file header info",
+		Method:           "POST",
+		RequestMimeType:  "application/json",
+		ResponseMimeType: "application/json",
+	}
+	if err := gateway.RegisterService(m); err != nil {
+		log.Println(err)
+	}
+
 	router := httprouter.New()
 
 	router.GET("/", func(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
