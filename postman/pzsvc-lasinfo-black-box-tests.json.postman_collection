@@ -14,22 +14,21 @@
 		{
 			"id": "a422dfbc-b7ef-a03f-47ac-fffe86db1a87",
 			"headers": "",
-			"url": "{{url}}",
-			"pathVariables": {},
+			"url": "http://pzsvc-lasinfo.cf.piazzageo.io",
 			"preRequestScript": "",
+			"pathVariables": {},
 			"method": "GET",
-			"collectionId": "e06ff78c-e3e6-14ee-50f7-59e40e3e2b5f",
 			"data": [],
 			"dataMode": "params",
-			"name": "Hello",
-			"description": "",
-			"descriptionFormat": "html",
-			"time": 1457630806450,
 			"version": 2,
-			"responses": [],
 			"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\n\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\ntests[\"Body is correct\"] = responseBody === \"Hi!\";\n\ntests[\"Response time is less than 200ms\"] = responseTime < 200;\n",
 			"currentHelper": "normal",
-			"helperAttributes": {}
+			"helperAttributes": {},
+			"time": 1457631052879,
+			"name": "Hello",
+			"description": "",
+			"collectionId": "e06ff78c-e3e6-14ee-50f7-59e40e3e2b5f",
+			"responses": []
 		}
 	]
 }
