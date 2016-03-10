@@ -1,0 +1,34 @@
+{
+	"id": "e06ff78c-e3e6-14ee-50f7-59e40e3e2b5f",
+	"name": "pzsvc-lasinfo-black-box-tests",
+	"description": "",
+	"order": [
+		"a422dfbc-b7ef-a03f-47ac-fffe86db1a87"
+	],
+	"folders": [],
+	"timestamp": 1457630789666,
+	"owner": "280268",
+	"remoteLink": "",
+	"public": false,
+	"requests": [
+		{
+			"id": "a422dfbc-b7ef-a03f-47ac-fffe86db1a87",
+			"headers": "",
+			"url": "http://pzsvc-lasinfo.cf.piazzageo.io",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\n\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\ntests[\"Body is correct\"] = responseBody === \"Hi!\";\n\ntests[\"Response time is less than 200ms\"] = responseTime < 200;\n",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1457631052879,
+			"name": "Hello",
+			"description": "",
+			"collectionId": "e06ff78c-e3e6-14ee-50f7-59e40e3e2b5f",
+			"responses": []
+		}
+	]
+}
