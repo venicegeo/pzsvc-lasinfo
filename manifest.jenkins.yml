@@ -1,0 +1,9 @@
+applications:
+- name: pzsvc-lasinfo
+  host: pzsvc-lasinfo
+  command: ./pzsvc-lasinfo.bin
+  buildpack: binary_buildpack
+  domain: stage.geointservices.io
+  memory: 512M
+  instances: 1
+  timeout: 180

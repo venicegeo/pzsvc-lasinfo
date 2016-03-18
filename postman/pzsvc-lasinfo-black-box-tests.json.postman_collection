@@ -14,7 +14,7 @@
 		{
 			"id": "a422dfbc-b7ef-a03f-47ac-fffe86db1a87",
 			"headers": "",
-			"url": "http://pzsvc-lasinfo.cf.piazzageo.io",
+			"url": "http://pzsvc-lasinfo.stage.geointservices.io",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "GET",
